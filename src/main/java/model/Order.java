@@ -7,6 +7,16 @@ public class Order {
     private int quantity;
     private double price;
 
+    public Order() {}
+
+    public Order(String clientId, long requestId, String name, int quantity, double price) {
+        this.clientId = clientId;
+        this.requestId = requestId;
+        this.name = name;
+        this.quantity = quantity;
+        this.price = price;
+    }
+
     public String getClientId() {
         return clientId;
     }
@@ -45,5 +55,33 @@ public class Order {
 
     public void setPrice(double price) {
         this.price = price;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof Order))
+            return false;
+        Order order = (Order) obj;
+        if (!this.clientId.equals(order.clientId)) {
+            return false;
+        }
+        if (this.requestId != order.requestId) {
+            return false;
+        }
+        if (!this.name.equals(order.name)) {
+            return false;
+        }
+        if (this.quantity != order.quantity) {
+            return false;
+        }
+        if (this.price != order.price) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return clientId.hashCode() + (int)(requestId % (long)Integer.MAX_VALUE) + name.hashCode();
     }
 }

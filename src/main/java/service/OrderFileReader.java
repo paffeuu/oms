@@ -13,19 +13,20 @@ import java.util.Scanner;
 
 public class OrderFileReader {
     private File[] files;
+    private final static String PATH = "target/classes/";
 
     public OrderFileReader(String[] fileNames) {
         files = new File[fileNames.length];
         for (int i = 0; i < fileNames.length; i++) {
-            files[i] = new File(fileNames[i]);
+            files[i] = new File(PATH + fileNames[i]);
         }
     }
 
-    public Order[] read() {
-        Order[] orders = new Order[files.length];
-        for (int i = 0; i < files.length; i++) {
+    public ArrayList<Order> read() {
+        ArrayList<Order> orders = new ArrayList<>();
+        for (File file : files) {
             try {
-                Scanner scanner = new Scanner(files[i]);
+                Scanner scanner = new Scanner(file);
                 ArrayList<String> content = new ArrayList<>();
                 while (scanner.hasNextLine()) {
                     content.add(scanner.nextLine());
@@ -36,13 +37,13 @@ public class OrderFileReader {
                 FileExtension fileExtension = checkFileExtension(content.get(0));
                 Parser parser;
                 if (fileExtension.equals(FileExtension.CSV)) {
-                    parser = new CsvParser();
+                    parser = new CsvParser(content);
                 } else if (fileExtension.equals(FileExtension.XML)) {
-                    parser = new XmlParser();
+                    parser = new XmlParser(content);
                 } else {
                     throw new IncorrectFileFormatException();
                 }
-                orders[i] = parser.parse();
+                orders.addAll(parser.parse());
             } catch (IOException ioex) {
                 ioex.printStackTrace();
             }
