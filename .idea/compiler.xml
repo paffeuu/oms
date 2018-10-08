@@ -9,6 +9,8 @@
         <module name="oms" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel target="8" />
+    <bytecodeTargetLevel target="8">
+      <module name="oms" target="7" />
+    </bytecodeTargetLevel>
   </component>
 </project>

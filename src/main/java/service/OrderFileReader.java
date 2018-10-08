@@ -13,12 +13,11 @@ import java.util.Scanner;
 
 public class OrderFileReader {
     private File[] files;
-    private final static String PATH = "target/classes/";
 
-    public OrderFileReader(String[] fileNames) {
+    public OrderFileReader(String[] fileNames, String path) {
         files = new File[fileNames.length];
         for (int i = 0; i < fileNames.length; i++) {
-            files[i] = new File(PATH + fileNames[i]);
+            files[i] = new File(path + fileNames[i]);
         }
     }
 
