@@ -10,7 +10,7 @@ public class MainApp {
 
     public static void main(String[] args) {
         ArrayList<Order> orders = prepareModel(args);
-        ConsoleOutput output = new ConsoleOutput(orders);
+        ConsoleOutput output = new ConsoleOutput();
 
         MainController mainController = new MainController(orders,output);
         mainController.start(orders.size() > 0);
