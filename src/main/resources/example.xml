@@ -5,6 +5,7 @@
         <name>Bułka</name>
         <quantity>1</quantity>
         <price>10.00</price>
+        <dupa>elo</dupa>
     </request>
     <request>
         <clientId>1</clientId>
