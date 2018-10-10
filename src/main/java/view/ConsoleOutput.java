@@ -28,6 +28,10 @@ public class ConsoleOutput {
         System.out.print("Choose: ");
     }
 
+    public void requestForClientId() {
+        System.out.println("Enter ClientId: ");
+    }
+
     public void showReport(String report) {
         System.out.println("\n" + report + "\n");
     }

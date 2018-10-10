@@ -15,23 +15,27 @@ public class ReportCreator {
     }
 
     public String create(int choice) {
+        return create(choice, null);
+    }
+
+    public String create(int choice, String clientId) {
         switch (choice) {
             case 1:
                 return createReportAmountOfOrdersInTotal();
             case 2:
-                return createReportAmountOfOrdersRelatedWithSpecificClientId();
+                return createReportAmountOfOrdersRelatedWithSpecificClientId(clientId);
             case 3:
                 return createReportTotalValueOfOrders();
             case 4:
-                return createReportTotalValueOfOrdersRelatedWithSpecificClientId();
+                return createReportTotalValueOfOrdersRelatedWithSpecificClientId(clientId);
             case 5:
                 return createReportListOfAllOrders();
             case 6:
-                return createReportListOfAllOrdersRelatedWithSpecificClientId();
+                return createReportListOfAllOrdersRelatedWithSpecificClientId(clientId);
             case 7:
                 return createReportAverageValueOfOrder();
             case 8:
-                return createReportAverageValueOfOrderRelatedWithSpecificClientId();
+                return createReportAverageValueOfOrderRelatedWithSpecificClientId(clientId);
         }
         return null;
     }
@@ -40,8 +44,14 @@ public class ReportCreator {
         return "Amount of orders in total is " + orders.size() + ".";
     }
 
-    private String createReportAmountOfOrdersRelatedWithSpecificClientId() {
-        return "2";
+    private String createReportAmountOfOrdersRelatedWithSpecificClientId(String clientId) {
+        int amount = 0;
+        for (Order order : orders) {
+            if (order.getClientId().equals(clientId)) {
+                amount++;
+            }
+        }
+        return "Amount of orders in total related with given ClientId is " + amount + ".";
     }
 
     private String createReportTotalValueOfOrders() {
@@ -52,29 +62,46 @@ public class ReportCreator {
         return "Total value of orders is " + totalValue + ".";
     }
 
-    private String createReportTotalValueOfOrdersRelatedWithSpecificClientId() {
-        return "4";
+    private String createReportTotalValueOfOrdersRelatedWithSpecificClientId(String clientId) {
+        double totalValue = 0;
+        for (Order order : orders) {
+            if (order.getClientId().equals(clientId)) {
+                totalValue += (double) order.getQuantity() * order.getPrice();
+            }
+        }
+        return "Total value of orders related with given ClientId is " + totalValue + ".";
     }
 
     private String createReportListOfAllOrders() {
+        return createReportListOfAllOrdersRelatedWithSpecificClientId(null);
+    }
+
+    private String createReportListOfAllOrdersRelatedWithSpecificClientId(String clientId) {
+        ArrayList<Order> selectedOrders;
+        if (clientId != null) {
+            selectedOrders = new ArrayList<>();
+            for (Order order : orders) {
+                if (order.getClientId().equals(clientId)) {
+                    selectedOrders.add(order);
+                }
+            }
+        } else {
+            selectedOrders = orders;
+        }
         String[] cols = new String[] {"Client_Id","Request_id","Name","Quantity","Price"};
-        Object[][] data = new Object[orders.size()][];
+        Object[][] data = new Object[selectedOrders.size()][];
         for (int i = 0; i < data.length; i++) {
             data[i] = new Object[5];
-            data[i][0] = orders.get(i).getClientId();
-            data[i][1] = orders.get(i).getRequestId();
-            data[i][2] = orders.get(i).getName();
-            data[i][3] = orders.get(i).getQuantity();
-            data[i][4] = orders.get(i).getPrice();
+            data[i][0] = selectedOrders.get(i).getClientId();
+            data[i][1] = selectedOrders.get(i).getRequestId();
+            data[i][2] = selectedOrders.get(i).getName();
+            data[i][3] = selectedOrders.get(i).getQuantity();
+            data[i][4] = selectedOrders.get(i).getPrice();
         }
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         TextTable table = new TextTable(cols, data);
         table.printTable(new PrintStream(outputStream), 0);
         return outputStream.toString();
-    }
-
-    private String createReportListOfAllOrdersRelatedWithSpecificClientId() {
-        return "6";
     }
 
     private String createReportAverageValueOfOrder() {
@@ -86,9 +113,16 @@ public class ReportCreator {
         return "Average value of order is " + average + ".";
     }
 
-    private String createReportAverageValueOfOrderRelatedWithSpecificClientId() {
-        return "8";
+    private String createReportAverageValueOfOrderRelatedWithSpecificClientId(String clientId) {
+        double sum = 0;
+        double amount = 0;
+        for (Order order : orders) {
+            if (order.getClientId().equals(clientId)) {
+                amount++;
+                sum += (double) order.getQuantity() * order.getPrice();
+            }
+        }
+        double average = sum / amount;
+        return "Average value of order related with given ClientId is " + average + ".";
     }
-
-
 }

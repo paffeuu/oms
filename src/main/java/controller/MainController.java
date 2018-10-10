@@ -1,6 +1,7 @@
 package controller;
 
 import model.Order;
+import service.OrderValidator;
 import service.ReportCreator;
 import view.ConsoleOutput;
 
@@ -13,18 +14,20 @@ public class MainController {
     private ConsoleOutput output;
     private Scanner scanner;
     private ReportCreator creator;
+    private OrderValidator validator;
 
     public MainController(ArrayList<Order> orders, ConsoleOutput consoleOutput) {
         this.orders = orders;
         this.output = consoleOutput;
         this.scanner = new Scanner(System.in);
         this.creator = new ReportCreator(orders);
+        this.validator = new OrderValidator();
     }
 
     public void start(boolean ordersLoaded) {
         output.notifyIfOrdersWereLoaded(ordersLoaded);
         output.displayGreetings();
-        while(mainLoop()) {}
+        while(mainLoop());
     }
 
     private boolean mainLoop() {
@@ -33,7 +36,12 @@ public class MainController {
         if (userChoice == 0) {
             return false;
         }
-        output.showReport(creator.create(userChoice));
+        if (userChoice % 2 == 0) {
+            output.requestForClientId();
+            output.showReport(creator.create(userChoice, readClientId()));
+        } else {
+            output.showReport(creator.create(userChoice));
+        }
         output.checkIfSaveToFile();
         if (readYesNo()) {
             output.notifyIfSavedToFile(saveToFile());
@@ -47,6 +55,20 @@ public class MainController {
             String input = scanner.nextLine();
             if (Pattern.matches("[0-8]", input)) {
                 return Integer.parseInt(input);
+            }
+            output.notifyBadInput();
+        }
+    }
+
+    private String readClientId() {
+        while (true) {
+            String clientId = scanner.nextLine();
+            if (validator.validateClientId(clientId) != null) {
+                for (Order order : orders) {
+                    if (order.getClientId().equals(clientId)) {
+                        return clientId;
+                    }
+                }
             }
             output.notifyBadInput();
         }
