@@ -33,7 +33,7 @@ public class ConsoleOutput {
     }
 
     public void checkIfSaveToFile() {
-        System.out.println("Save report to file? (Y - yes, N - no): ");
+        System.out.print("Save report to file? (Y - yes, N - no): ");
     }
 
     public void notifyIfSavedToFile(String file) {

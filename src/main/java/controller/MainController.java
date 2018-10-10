@@ -1,6 +1,7 @@
 package controller;
 
 import model.Order;
+import service.ReportCreator;
 import view.ConsoleOutput;
 
 import java.util.ArrayList;
@@ -11,11 +12,13 @@ public class MainController {
     private ArrayList<Order> orders;
     private ConsoleOutput output;
     private Scanner scanner;
+    private ReportCreator creator;
 
     public MainController(ArrayList<Order> orders, ConsoleOutput consoleOutput) {
         this.orders = orders;
         this.output = consoleOutput;
         this.scanner = new Scanner(System.in);
+        this.creator = new ReportCreator(orders);
     }
 
     public void start(boolean ordersLoaded) {
@@ -26,7 +29,11 @@ public class MainController {
 
     private boolean mainLoop() {
         output.menu();
-        output.showReport(generateReport(readMenuUserChoice()));
+        int userChoice = readMenuUserChoice();
+        if (userChoice == 0) {
+            return false;
+        }
+        output.showReport(creator.create(userChoice));
         output.checkIfSaveToFile();
         if (readYesNo()) {
             output.notifyIfSavedToFile(saveToFile());
@@ -43,11 +50,6 @@ public class MainController {
             }
             output.notifyBadInput();
         }
-    }
-
-    private String generateReport(int choice) {
-        // report generator
-        return "report\nreport\nreport";
     }
 
     private boolean readYesNo() {
