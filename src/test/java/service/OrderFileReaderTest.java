@@ -10,8 +10,7 @@ import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class OrderFileReaderTest {
-    private final static String PATH = "target/test-classes/";
-    OrderFileReader orderFileReader;
+    private OrderFileReader orderFileReader;
 
     @Test
     void read() {
@@ -22,15 +21,15 @@ class OrderFileReaderTest {
         correctList.add(new Order("2",1,"Chleb",1,10.00));
 
         String[] files = new String[]{"example.csv"};
-        orderFileReader = new OrderFileReader(files, PATH);
+        orderFileReader = new OrderFileReader(files);
         assertArrayEquals(correctList.toArray(), orderFileReader.read().toArray());
 
         files = new String[]{"example.xml"};
-        orderFileReader = new OrderFileReader(files, PATH);
+        orderFileReader = new OrderFileReader(files);
         assertArrayEquals(correctList.toArray(), orderFileReader.read().toArray());
 
         files = new String[]{"example.csv", "example.xml"};
-        orderFileReader = new OrderFileReader(files, PATH);
+        orderFileReader = new OrderFileReader(files);
     }
 
     @Test

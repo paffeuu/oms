@@ -1,6 +1,9 @@
 package controller;
 
 import model.Order;
+import service.OrderValidator;
+import service.reports.ReportCreator;
+import service.reports.ReportSaver;
 import view.ConsoleOutput;
 
 import java.util.ArrayList;
@@ -11,25 +14,40 @@ public class MainController {
     private ArrayList<Order> orders;
     private ConsoleOutput output;
     private Scanner scanner;
+    private ReportCreator creator;
+    private ReportSaver saver;
+    private OrderValidator validator;
 
     public MainController(ArrayList<Order> orders, ConsoleOutput consoleOutput) {
         this.orders = orders;
         this.output = consoleOutput;
         this.scanner = new Scanner(System.in);
+        this.creator = new ReportCreator(orders);
+        this.saver = new ReportSaver();
+        this.validator = new OrderValidator();
     }
 
     public void start(boolean ordersLoaded) {
         output.notifyIfOrdersWereLoaded(ordersLoaded);
         output.displayGreetings();
-        while(mainLoop()) {}
+        while(mainLoop());
     }
 
     private boolean mainLoop() {
         output.menu();
-        output.showReport(generateReport(readMenuUserChoice()));
+        int userChoice = readMenuUserChoice();
+        if (userChoice == 0) {
+            return false;
+        }
+        if (userChoice % 2 == 0) {
+            output.requestForClientId();
+            output.showReport(creator.create(userChoice, readClientId()));
+        } else {
+            output.showReport(creator.create(userChoice));
+        }
         output.checkIfSaveToFile();
         if (readYesNo()) {
-            output.notifyIfSavedToFile(saveToFile());
+            output.notifyIfSavedToFile(saveToFile(userChoice));
         }
         output.checkIfLoopShouldBeRepeated();
         return readYesNo();
@@ -45,9 +63,18 @@ public class MainController {
         }
     }
 
-    private String generateReport(int choice) {
-        // report generator
-        return "report\nreport\nreport";
+    private String readClientId() {
+        while (true) {
+            String clientId = scanner.nextLine();
+            if (validator.validateClientId(clientId) != null) {
+                for (Order order : orders) {
+                    if (order.getClientId().equals(clientId)) {
+                        return clientId;
+                    }
+                }
+            }
+            output.notifyBadInput();
+        }
     }
 
     private boolean readYesNo() {
@@ -63,8 +90,11 @@ public class MainController {
         }
     }
 
-    private String saveToFile() {
-        // report saver
-        return "random_name.csv";
+    private String saveToFile(int choice) {
+        if (choice == 5 || choice == 6) {
+            return saver.saveReportToFile(creator.getLastReportList());
+        } else {
+            return saver.saveReportToFile(creator.getLastReport());
+        }
     }
 }
