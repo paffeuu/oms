@@ -2,7 +2,8 @@ package controller;
 
 import model.Order;
 import service.OrderValidator;
-import service.ReportCreator;
+import service.reports.ReportCreator;
+import service.reports.ReportSaver;
 import view.ConsoleOutput;
 
 import java.util.ArrayList;
@@ -14,6 +15,7 @@ public class MainController {
     private ConsoleOutput output;
     private Scanner scanner;
     private ReportCreator creator;
+    private ReportSaver saver;
     private OrderValidator validator;
 
     public MainController(ArrayList<Order> orders, ConsoleOutput consoleOutput) {
@@ -21,6 +23,7 @@ public class MainController {
         this.output = consoleOutput;
         this.scanner = new Scanner(System.in);
         this.creator = new ReportCreator(orders);
+        this.saver = new ReportSaver();
         this.validator = new OrderValidator();
     }
 
@@ -44,7 +47,7 @@ public class MainController {
         }
         output.checkIfSaveToFile();
         if (readYesNo()) {
-            output.notifyIfSavedToFile(saveToFile());
+            output.notifyIfSavedToFile(saveToFile(userChoice));
         }
         output.checkIfLoopShouldBeRepeated();
         return readYesNo();
@@ -87,8 +90,11 @@ public class MainController {
         }
     }
 
-    private String saveToFile() {
-        // report saver
-        return "random_name.csv";
+    private String saveToFile(int choice) {
+        if (choice == 5 || choice == 6) {
+            return saver.saveReportToFile(creator.getLastReportList());
+        } else {
+            return saver.saveReportToFile(creator.getLastReport());
+        }
     }
 }

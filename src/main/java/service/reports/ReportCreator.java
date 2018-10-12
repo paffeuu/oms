@@ -1,4 +1,4 @@
-package service;
+package service.reports;
 
 import dnl.utils.text.table.TextTable;
 import model.Order;
@@ -9,6 +9,8 @@ import java.util.ArrayList;
 
 public class ReportCreator {
     private ArrayList<Order> orders;
+    private String lastReport;
+    private TextTable lastReportList;
 
     public ReportCreator(ArrayList<Order> orders) {
         this.orders = orders;
@@ -51,7 +53,8 @@ public class ReportCreator {
                 amount++;
             }
         }
-        return "Amount of orders in total related with given ClientId is " + amount + ".";
+        lastReport = "Amount of orders in total related with given ClientId is " + amount + ".";
+        return lastReport;
     }
 
     private String createReportTotalValueOfOrders() {
@@ -59,7 +62,8 @@ public class ReportCreator {
         for (Order order : orders) {
             totalValue += (double) order.getQuantity() * order.getPrice();
         }
-        return "Total value of orders is " + totalValue + ".";
+        lastReport = "Total value of orders is " + totalValue + ".";
+        return lastReport;
     }
 
     private String createReportTotalValueOfOrdersRelatedWithSpecificClientId(String clientId) {
@@ -69,7 +73,8 @@ public class ReportCreator {
                 totalValue += (double) order.getQuantity() * order.getPrice();
             }
         }
-        return "Total value of orders related with given ClientId is " + totalValue + ".";
+        lastReport = "Total value of orders related with given ClientId is " + totalValue + ".";
+        return lastReport;
     }
 
     private String createReportListOfAllOrders() {
@@ -100,6 +105,7 @@ public class ReportCreator {
         }
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         TextTable table = new TextTable(cols, data);
+        lastReportList = table;
         table.printTable(new PrintStream(outputStream), 0);
         return outputStream.toString();
     }
@@ -110,7 +116,8 @@ public class ReportCreator {
             sum += (double) order.getQuantity() * order.getPrice();
         }
         double average = sum / orders.size();
-        return "Average value of order is " + average + ".";
+        lastReport = "Average value of order is " + average + ".";
+        return lastReport;
     }
 
     private String createReportAverageValueOfOrderRelatedWithSpecificClientId(String clientId) {
@@ -123,6 +130,15 @@ public class ReportCreator {
             }
         }
         double average = sum / amount;
-        return "Average value of order related with given ClientId is " + average + ".";
+        lastReport = "Average value of order related with given ClientId is " + average + ".";
+        return lastReport;
+    }
+
+    public String getLastReport() {
+        return lastReport;
+    }
+
+    public TextTable getLastReportList() {
+        return lastReportList;
     }
 }
