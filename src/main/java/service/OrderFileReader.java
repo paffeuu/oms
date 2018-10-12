@@ -8,24 +8,23 @@ import service.parser.XmlParser;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Scanner;
 
 public class OrderFileReader {
-    private File[] files;
+    private String[] fileNames;
 
-    public OrderFileReader(String[] fileNames, String path) {
-        files = new File[fileNames.length];
-        for (int i = 0; i < fileNames.length; i++) {
-            files[i] = new File(path + fileNames[i]);
-        }
+    public OrderFileReader(String[] fileNames) {
+        this.fileNames = fileNames;
     }
 
     public ArrayList<Order> read() {
         ArrayList<Order> orders = new ArrayList<>();
-        for (File file : files) {
+        for (String file : fileNames) {
             try {
-                Scanner scanner = new Scanner(file);
+                InputStream input = getClass().getResourceAsStream("/" + file);
+                Scanner scanner = new Scanner(input);
                 ArrayList<String> content = new ArrayList<>();
                 while (scanner.hasNextLine()) {
                     content.add(scanner.nextLine());

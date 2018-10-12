@@ -1,0 +1,1 @@
+java -cp target/oms-1.0-SNAPSHOT.jar;dependency MainApp example.csv example.xml sample.csv

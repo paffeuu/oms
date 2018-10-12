@@ -18,7 +18,7 @@ public class MainApp {
 
     private static ArrayList<Order> prepareModel(String[] args) {
         System.out.println("Loading orders from files...");
-        OrderFileReader reader = new OrderFileReader(args,PATH);
+        OrderFileReader reader = new OrderFileReader(args);
         return reader.read();
     }
 }
